@@ -82,7 +82,6 @@ public class Student {
     private String department;
     private String email;
 
-    // Constructors
     public Student() {
     }
 
@@ -92,7 +91,6 @@ public class Student {
         this.email = email;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -140,7 +138,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    // Spring Data JPA provides all standard CRUD methods (findAll, findById, save, deleteById, etc.)
 }
 StudentService.java (Service)
 Located in src/main/java/com/example/jpa_project/service/StudentService.java
@@ -176,24 +173,19 @@ public class StudentService {
     }
 
     public Optional<Student> updateStudent(Long id, Student studentDetails) {
-        // Find the existing student
         return studentRepository.findById(id).map(existingStudent -> {
-            // Update the fields
             existingStudent.setName(studentDetails.getName());
             existingStudent.setDepartment(studentDetails.getDepartment());
             existingStudent.setEmail(studentDetails.getEmail());
-            // Save and return the updated student
             return studentRepository.save(existingStudent);
         });
     }
 
     public boolean deleteStudent(Long id) {
-        // Check if the student exists
         return studentRepository.findById(id).map(student -> {
-            // If exists, delete it
             studentRepository.delete(student);
             return true;
-        }).orElse(false); // Otherwise, return false (not found)
+        }).orElse(false); 
     }
 }
 ```
@@ -220,22 +212,18 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    // 1. Create a new Student
-    // POST http://localhost:8080/students
+
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
         return studentService.createStudent(student);
     }
 
-    // 2. Get all Students
-    // GET http://localhost:8080/students
     @GetMapping
     public List<Student> getAllStudents() {
         return studentService.getAllStudents();
     }
 
-    // 3. Get a single Student by ID
-    // GET http://localhost:8080/students/1
+
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
         return studentService.getStudentById(id)
@@ -243,8 +231,6 @@ public class StudentController {
                 .orElse(ResponseEntity.notFound().build()); // If not found, return 404 Not Found
     }
 
-    // 4. Update an existing Student
-    // PUT http://localhost:8080/students/1
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student studentDetails) {
         return studentService.updateStudent(id, studentDetails)
@@ -252,8 +238,7 @@ public class StudentController {
                 .orElse(ResponseEntity.notFound().build()); // If not found, return 404 Not Found
     }
 
-    // 5. Delete a Student
-    // DELETE http://localhost:8080/students/1
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         // Use <Void> for an empty response body
